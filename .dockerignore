@@ -1,6 +1,6 @@
 **/bin/
 **/obj/
-**/data/
+/data/
 **/*.db
 **/*.db-*
 .git/
@@ -8,3 +8,5 @@
 .claude/
 specs/
 tests/
+web/node_modules/
+src/Auth.Api/wwwroot/

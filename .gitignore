@@ -482,8 +482,15 @@ $RECYCLE.BIN/
 *.swp
 
 # Local SQLite data
-data/
+/data/
 *.db
 *.db-shm
 *.db-wal
 
+
+# SPA build output (npm run build in web/)
+src/Auth.Api/wwwroot/
+web/node_modules/
+
+# Signing keys are created at first start; never commit them
+*.pem
