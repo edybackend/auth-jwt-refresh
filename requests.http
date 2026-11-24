@@ -1,0 +1,37 @@
+### Auth — try it from VS Code (REST Client) or Rider/Visual Studio. The client keeps the refresh cookie for you.
+### Run it first: `docker compose up --build`. App: http://localhost:8080
+@base = http://localhost:8080
+
+### 1. Sign in — access token in the body, refresh token in an HttpOnly cookie
+# @name login
+POST {{base}}/api/auth/login
+Content-Type: application/json
+
+{ "email": "user@example.com", "password": "correct-horse-battery" }
+
+### 2. Call the API with the access token
+GET {{base}}/api/me
+Authorization: Bearer {{login.response.body.accessToken}}
+
+### 3. Admin only → 403 for this user
+GET {{base}}/api/admin/users
+Authorization: Bearer {{login.response.body.accessToken}}
+
+### 4. Refresh: new access token, and the refresh cookie is replaced (rotation)
+POST {{base}}/api/auth/refresh
+
+### 5. Active sessions (one per device)
+GET {{base}}/api/auth/sessions
+Authorization: Bearer {{login.response.body.accessToken}}
+
+### 6. The public key other services use to validate tokens
+GET {{base}}/.well-known/jwks.json
+
+### 7. Weak passwords are refused
+POST {{base}}/api/auth/register
+Content-Type: application/json
+
+{ "email": "dana@example.com", "password": "password1234" }
+
+### 8. Sign out
+POST {{base}}/api/auth/logout
