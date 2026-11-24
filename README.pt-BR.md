@@ -8,8 +8,6 @@ Autenticação para uma SPA feita como uma revisão de segurança esperaria, em 
 - **Refresh token:** opaco, fica num cookie `HttpOnly` e é **trocado a cada uso**. **Reusar um antigo derruba a sessão inteira**, porque significa que outra pessoa tem uma cópia.
 - **Senhas:** PBKDF2 com 600 mil iterações, bloqueio após tentativas erradas, e nenhum jeito de descobrir quais e-mails têm conta.
 
-Pequeno de propósito: dá para ler em uns 15 minutos e subir com um comando.
-
 ![A SPA: access token decodificado, /api/me 200, endpoint de admin 403 para usuário comum e as sessões ativas com revogação](docs/spa.png)
 
 ## Como rodar
@@ -115,20 +113,9 @@ Uma mutação prova que os testes de reuso são reais: se o token usado for trat
 - **Uma chave de assinatura só.** O formato JWKS suporta várias chaves para rotação (publicar a nova, passar a assinar com ela, aposentar a antiga), o que não está implementado aqui.
 - **Sem confirmação de e-mail, troca de senha ou MFA.** Estão fora do escopo deste repositório.
 
-## Engenharia assistida por IA
+## Trabalhando com um agente de IA
 
-Este projeto foi construído com o Claude Code sob controles explícitos de engenharia:
-
-- **Regras do projeto** ([`CLAUDE.md`](CLAUDE.md)) definem a estrutura e as regras de segurança que o agente segue.
-- **Hooks** ([`.claude/settings.json`](.claude/settings.json)):
-  - formatam cada mudança;
-  - bloqueiam edição de segredos, chaves e bancos;
-  - **bloqueiam afrouxar a validação do token ou os atributos do cookie**, **logar senhas ou tokens** e **guardar tokens em web storage**;
-  - rodam build e testes antes de a tarefa ser dada como pronta.
-- **Spec primeiro**: cada funcionalidade começa como especificação em [`specs/`](specs), com critérios de aceite.
-- **Os mesmos portões de qualidade para cada linha**: o CI exige zero avisos, formatação, os testes acima, lint e build da SPA, uma execução no contêiner com cookies reais e varredura de segredos.
-
-A arquitetura é minha, e eu reviso cada mudança.
+Código de autenticação falha em silêncio: um `ValidateLifetime = false` e tudo continua "funcionando". Quando uso um agente de IA aqui, hooks em [`.claude/`](.claude) recusam afrouxar a validação do token, mexer nos atributos do cookie, senhas ou tokens em log e tokens em web storage. As regras de segurança estão no [`CLAUDE.md`](CLAUDE.md).
 
 ## Licença
 

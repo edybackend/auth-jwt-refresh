@@ -8,8 +8,6 @@ Authentication for a single-page app, done the way a security review would expec
 - **Refresh token:** opaque, lives in an `HttpOnly` cookie, **rotated on every use**. **Reusing an old one revokes the whole session**, because it means someone else has a copy.
 - **Passwords:** PBKDF2 with 600,000 iterations, lockout after failed attempts, and no way to tell which emails have accounts.
 
-Small on purpose: it can be read in about 15 minutes and started with one command.
-
 ![The SPA: decoded access token, /api/me 200, admin endpoint 403 for a normal user, and the active sessions with revoke](docs/spa.png)
 
 ## Quick start
@@ -115,20 +113,9 @@ A mutation proves the reuse tests are real: if a used token is treated as merely
 - **One signing key.** The JWKS format supports several keys for rotation (publish the new one, start signing with it, retire the old one), which is not implemented here.
 - **No email verification, password reset or MFA.** They are outside the scope of this repository.
 
-## AI-Assisted Engineering
+## Working with an AI agent
 
-This project was built with Claude Code under explicit engineering controls:
-
-- **Project rules** ([`CLAUDE.md`](CLAUDE.md)) define the layout and the security rules the agent must follow.
-- **Hooks** ([`.claude/settings.json`](.claude/settings.json)):
-  - format every change;
-  - block edits to secrets, keys and databases;
-  - **block weakening token validation or the cookie flags**, **logging passwords or tokens**, and **storing tokens in web storage**;
-  - run the build and tests before a task is considered done.
-- **Spec-first**: each feature starts as a spec in [`specs/`](specs) with acceptance criteria.
-- **Same quality gates for every line**: CI enforces warnings as errors, formatting, the tests above, the SPA lint and build, a container run with real cookies, and secret scanning.
-
-I own the architecture and review every change.
+Authentication code fails quietly: one `ValidateLifetime = false` and everything still "works". When I use an AI agent here, hooks in [`.claude/`](.claude) refuse weakened token validation, changes to the cookie flags, passwords or tokens in logs, and tokens in web storage. The security rules are in [`CLAUDE.md`](CLAUDE.md).
 
 ## License
 
