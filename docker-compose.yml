@@ -1,0 +1,15 @@
+name: auth-jwt-refresh
+
+services:
+  auth:
+    build:
+      context: .
+    image: auth-jwt-refresh:local
+    ports:
+      - "8080:8080" # app: http://localhost:8080 · API reference: http://localhost:8080/scalar
+    volumes:
+      - auth-data:/app/data # database and the signing key (kept across restarts)
+    restart: unless-stopped
+
+volumes:
+  auth-data:
