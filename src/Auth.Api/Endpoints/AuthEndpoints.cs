@@ -34,13 +34,13 @@ internal static class AuthEndpoints
         })
             .WithSummary("Create an account (password: 12+ characters, not a common one)");
 
-        auth.MapPost("/login", async (Credentials request, HttpContext http, AccountService accounts, RefreshSessions sessions, AccessTokenIssuer issuer, CancellationToken ct) =>
+        auth.MapPost("/login", async (Credentials request, HttpContext http, AccountService accounts, RefreshSessions sessions, AccessTokenIssuer issuer, TimeProvider clock, CancellationToken ct) =>
         {
             var result = await accounts.LoginAsync(request.Email, request.Password, ct);
             switch (result.Status)
             {
                 case LoginStatus.LockedOut:
-                    http.Response.Headers.RetryAfter = Math.Ceiling((result.LockedUntil!.Value - DateTimeOffset.UtcNow).TotalSeconds).ToString(System.Globalization.CultureInfo.InvariantCulture);
+                    http.Response.Headers.RetryAfter = Math.Ceiling((result.LockedUntil!.Value - clock.GetUtcNow()).TotalSeconds).ToString(System.Globalization.CultureInfo.InvariantCulture);
                     return Results.Problem("Too many failed attempts. The account is locked for a while.", statusCode: StatusCodes.Status423Locked);
                 case LoginStatus.InvalidCredentials:
                     return Results.Problem("Wrong email or password.", statusCode: StatusCodes.Status401Unauthorized);
