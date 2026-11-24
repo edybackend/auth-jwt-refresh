@@ -2,4 +2,8 @@
   <Folder Name="/src/">
     <Project Path="src/Auth.Api/Auth.Api.csproj" />
   </Folder>
+  <Folder Name="/tests/">
+    <Project Path="tests/Auth.IntegrationTests/Auth.IntegrationTests.csproj" />
+    <Project Path="tests/Auth.UnitTests/Auth.UnitTests.csproj" />
+  </Folder>
 </Solution>
